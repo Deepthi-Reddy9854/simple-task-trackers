@@ -30,6 +30,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
 // Health check endpoint
+app.get('/api', (req, res) => {
+  res.json({ status: 'ok', message: 'Simple Task Tracker API is running smoothly' });
+});
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Simple Task Tracker API is running smoothly' });
 });
