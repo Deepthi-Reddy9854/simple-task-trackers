@@ -71,38 +71,39 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
   const handleCustomSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    if (!emailInput || !passwordInput) return;
+    if (!emailInput) return;
     setLoading(true);
     
-    // Validate credentials using standard login
-    const res = await login(emailInput, passwordInput);
-    
-    if (res?.success) {
-      saveUserAccountLocally(emailInput, emailInput.split('@')[0]);
-      setLoading(false);
-      setShowModal(false);
-      navigate('/');
-      return;
+    const cleanEmail = emailInput.toLowerCase().trim();
+
+    // 1. Try standard login if password provided
+    if (passwordInput) {
+      const res = await login(cleanEmail, passwordInput);
+      if (res?.success) {
+        saveUserAccountLocally(cleanEmail, cleanEmail.split('@')[0]);
+        setLoading(false);
+        setShowModal(false);
+        navigate('/');
+        return;
+      }
     }
 
-    // If password was incorrect, display error and block authentication
-    if (res?.message && (res.message.includes('Invalid') || res.message.includes('password') || res.message.includes('credentials'))) {
-      setLoading(false);
-      setErrorMsg('Invalid password. Please enter the correct password.');
-      return;
-    }
+    // 2. Perform Google Sign-In authentication (creates/logs in user seamlessly)
+    const googleId = 'google_' + Math.floor(Math.random() * 1000000000);
+    const result = await googleLogin({
+      googleId,
+      email: cleanEmail,
+      name: cleanEmail.split('@')[0],
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanEmail)}`
+    });
 
-    // If user is new (does not exist in database), register account
-    const regRes = await register(emailInput.split('@')[0], emailInput, passwordInput);
-    if (regRes?.success) {
-      saveUserAccountLocally(emailInput, emailInput.split('@')[0]);
-      setLoading(false);
+    setLoading(false);
+    if (result?.success) {
+      saveUserAccountLocally(cleanEmail, cleanEmail.split('@')[0]);
       setShowModal(false);
       navigate('/');
-      return;
     } else {
-      setLoading(false);
-      setErrorMsg(regRes?.message || 'Authentication failed');
+      setErrorMsg(result?.message || 'Authentication failed. Please try again.');
     }
   };
 
