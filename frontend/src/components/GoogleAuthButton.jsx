@@ -120,23 +120,23 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
           justifyContent: 'center',
           gap: '0.75rem',
           padding: '0.75rem 1rem',
-          background: '#ffffff',
-          border: '1px solid #e4e4e7',
-          color: '#18181b',
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          color: '#f8fafc',
           fontWeight: 600,
           fontSize: '0.92rem',
-          borderRadius: '8px',
-          boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+          borderRadius: 'var(--radius-sm)',
+          boxShadow: 'var(--shadow-sm)',
           transition: 'all 0.15s ease',
           cursor: loading ? 'wait' : 'pointer'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#f4f4f5';
-          e.currentTarget.style.borderColor = '#d4d4d8';
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#ffffff';
-          e.currentTarget.style.borderColor = '#e4e4e7';
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
         }}
       >
         {/* Google Multicolor SVG Logo */}
@@ -169,8 +169,9 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.65)',
-          backdropFilter: 'blur(4px)',
+          backgroundColor: 'rgba(9, 13, 22, 0.75)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -179,25 +180,25 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
           fontFamily: "'Google Sans', 'Roboto', 'Segoe UI', Arial, sans-serif"
         }}>
           <div style={{
-            background: '#ffffff',
-            color: '#1f1f1f',
-            borderRadius: '28px',
+            background: '#0f172a',
+            color: '#f8fafc',
+            borderRadius: '24px',
             width: '100%',
             maxWidth: '450px',
-            boxShadow: '0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12)',
+            boxShadow: 'var(--shadow-lg), var(--shadow-glow)',
             overflow: 'hidden',
-            border: '1px solid #dadce0'
+            border: '1px solid rgba(255, 255, 255, 0.15)'
           }}>
-            {/* Chrome Titlebar Header */}
+            {/* Titlebar Header */}
             <div style={{
-              background: '#e8eaed',
-              padding: '8px 16px',
+              background: '#1e293b',
+              padding: '10px 18px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              borderBottom: '1px solid #dadce0',
-              fontSize: '12px',
-              color: '#3c4043'
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              fontSize: '13px',
+              color: '#94a3b8'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24">
@@ -211,49 +212,51 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#5f6368', padding: '0 4px' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#94a3b8', padding: '0 4px' }}
               >
                 ✕
               </button>
             </div>
 
             {/* Modal Body */}
-            <div style={{ padding: '36px 36px 24px 36px' }}>
+            <div style={{ padding: '32px 32px 24px 32px' }}>
               {/* Google Brand Header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                 </svg>
-                <span style={{ fontSize: '15px', color: '#3c4043', fontWeight: 500 }}>Sign in with Google</span>
-              </div>              {/* Sign in View */}
+                <span style={{ fontSize: '15px', color: '#cbd5e1', fontWeight: 500 }}>Sign in with Google</span>
+              </div>
+
+              {/* Sign in View */}
               <>
-                <h2 style={{ fontSize: '32px', fontWeight: 400, color: '#1f1f1f', margin: '0 0 8px 0' }}>
+                <h2 style={{ fontSize: '28px', fontWeight: 600, color: '#f8fafc', margin: '0 0 8px 0' }}>
                   Sign in
                 </h2>
-                <p style={{ fontSize: '16px', color: '#444746', margin: '0 0 20px 0' }}>
-                  to continue to <span style={{ color: '#0b57d0', fontWeight: 500 }}>Simple Task Tracker</span>
+                <p style={{ fontSize: '15px', color: '#94a3b8', margin: '0 0 20px 0' }}>
+                  to continue to <span style={{ color: '#818cf8', fontWeight: 600 }}>Simple Task Tracker</span>
                 </p>
 
                 {errorMsg && (
                   <div style={{
-                    backgroundColor: '#fde8e8',
-                    color: '#9b1c1c',
+                    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                    color: '#f87171',
                     padding: '10px 14px',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     fontSize: '14px',
                     marginBottom: '16px',
                     fontWeight: '500',
-                    border: '1px solid #f8b4b4'
+                    border: '1px solid rgba(239, 68, 68, 0.35)'
                   }}>
                     {errorMsg}
                   </div>
                 )}
 
                 <form onSubmit={handleCustomSubmit}>
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={{ marginBottom: '16px' }}>
                     <input
                       type="email"
                       required
@@ -265,15 +268,17 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
                       }}
                       style={{
                         width: '100%',
-                        padding: '14px 16px',
-                        borderRadius: '4px',
-                        border: '1px solid #747775',
-                        fontSize: '16px',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        background: 'rgba(15, 23, 42, 0.8)',
+                        color: '#f8fafc',
+                        fontSize: '15px',
                         outline: 'none',
                         boxSizing: 'border-box'
                       }}
-                      onFocus={(e) => e.target.style.borderColor = '#0b57d0'}
-                      onBlur={(e) => e.target.style.borderColor = '#747775'}
+                      onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                      onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)'}
                     />
                   </div>
 
@@ -289,15 +294,17 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
                       }}
                       style={{
                         width: '100%',
-                        padding: '14px 16px',
-                        borderRadius: '4px',
-                        border: '1px solid #747775',
-                        fontSize: '16px',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        background: 'rgba(15, 23, 42, 0.8)',
+                        color: '#f8fafc',
+                        fontSize: '15px',
                         outline: 'none',
                         boxSizing: 'border-box'
                       }}
-                      onFocus={(e) => e.target.style.borderColor = '#0b57d0'}
-                      onBlur={(e) => e.target.style.borderColor = '#747775'}
+                      onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                      onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)'}
                     />
                   </div>
 
@@ -311,7 +318,7 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: '#0b57d0',
+                        color: '#818cf8',
                         fontWeight: 500,
                         fontSize: '14px',
                         cursor: 'pointer',
@@ -327,14 +334,15 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
                       type="submit"
                       disabled={loading}
                       style={{
-                        backgroundColor: '#0b57d0',
+                        background: 'var(--accent-gradient)',
                         color: '#ffffff',
                         border: 'none',
                         borderRadius: '100px',
-                        padding: '10px 24px',
+                        padding: '10px 26px',
                         fontSize: '14px',
-                        fontWeight: 500,
-                        cursor: loading ? 'wait' : 'pointer'
+                        fontWeight: 600,
+                        cursor: loading ? 'wait' : 'pointer',
+                        boxShadow: 'var(--shadow-glow)'
                       }}
                     >
                       {loading ? 'Authenticating...' : 'Next'}
@@ -344,21 +352,21 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
               </>
 
               {/* Disclaimer */}
-              <p style={{ fontSize: '14px', color: '#444746', margin: '32px 0 0 0', lineHeight: 1.4 }}>
-                Before using this app, you can review Simple Task Tracker's <span style={{ color: '#0b57d0', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0b57d0', cursor: 'pointer' }}>Terms of Service</span>.
+              <p style={{ fontSize: '13px', color: '#94a3b8', margin: '28px 0 0 0', lineHeight: 1.4 }}>
+                Before using this app, you can review Simple Task Tracker's <span style={{ color: '#818cf8', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#818cf8', cursor: 'pointer' }}>Terms of Service</span>.
               </p>
             </div>
 
             {/* Bottom Footer */}
             <div style={{
-              padding: '12px 36px',
-              borderTop: '1px solid #e0e0e0',
+              padding: '12px 32px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               fontSize: '12px',
-              color: '#444746',
-              background: '#f8f9fa'
+              color: '#94a3b8',
+              background: '#1e293b'
             }}>
               <div>English (United States) ▼</div>
               <div style={{ display: 'flex', gap: '16px' }}>

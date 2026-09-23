@@ -60,17 +60,17 @@ const RegisterPage = () => {
           margin: '1.5rem 0',
           position: 'relative'
         }}>
-          <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.12)' }}></div>
           <span style={{
             padding: '0 0.8rem',
             fontSize: '0.78rem',
-            color: '#71717a',
+            color: 'var(--text-muted)',
             fontWeight: 500,
             letterSpacing: '0.05em'
           }}>
             OR
           </span>
-          <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.12)' }}></div>
         </div>
 
         {/* Registration Form */}
@@ -81,7 +81,7 @@ const RegisterPage = () => {
               display: 'block',
               fontSize: '0.9rem',
               fontWeight: 600,
-              color: '#18181b',
+              color: '#e2e8f0',
               marginBottom: '0.45rem'
             }}>
               Full Name
@@ -92,7 +92,7 @@ const RegisterPage = () => {
                 left: '0.85rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#71717a'
+                color: '#94a3b8'
               }} />
               <input
                 type="text"
@@ -111,7 +111,7 @@ const RegisterPage = () => {
               display: 'block',
               fontSize: '0.9rem',
               fontWeight: 600,
-              color: '#18181b',
+              color: '#e2e8f0',
               marginBottom: '0.45rem'
             }}>
               Email
@@ -122,7 +122,7 @@ const RegisterPage = () => {
                 left: '0.85rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#71717a'
+                color: '#94a3b8'
               }} />
               <input
                 type="email"
@@ -141,7 +141,7 @@ const RegisterPage = () => {
               display: 'block',
               fontSize: '0.9rem',
               fontWeight: 600,
-              color: '#18181b',
+              color: '#e2e8f0',
               marginBottom: '0.45rem'
             }}>
               Password (min 6 chars)
@@ -152,7 +152,7 @@ const RegisterPage = () => {
                 left: '0.85rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#71717a'
+                color: '#94a3b8'
               }} />
               <input
                 type="password"

@@ -112,17 +112,17 @@ const LoginPage = () => {
           margin: '1.5rem 0',
           position: 'relative'
         }}>
-          <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.12)' }}></div>
           <span style={{
             padding: '0 0.8rem',
             fontSize: '0.78rem',
-            color: '#71717a',
+            color: 'var(--text-muted)',
             fontWeight: 500,
             letterSpacing: '0.05em'
           }}>
             OR
           </span>
-          <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.12)' }}></div>
         </div>
 
         {/* Login Form */}
@@ -133,7 +133,7 @@ const LoginPage = () => {
               display: 'block',
               fontSize: '0.9rem',
               fontWeight: 600,
-              color: '#18181b',
+              color: '#e2e8f0',
               marginBottom: '0.45rem'
             }}>
               Email
@@ -144,7 +144,7 @@ const LoginPage = () => {
                 left: '0.85rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#71717a'
+                color: '#94a3b8'
               }} />
               <input
                 type="email"
@@ -168,7 +168,7 @@ const LoginPage = () => {
               <label style={{
                 fontSize: '0.9rem',
                 fontWeight: 600,
-                color: '#18181b',
+                color: '#e2e8f0',
                 margin: 0
               }}>
                 Password
@@ -180,7 +180,7 @@ const LoginPage = () => {
                   background: 'none',
                   border: 'none',
                   fontSize: '0.82rem',
-                  color: '#2563eb',
+                  color: '#818cf8',
                   fontWeight: 500,
                   cursor: 'pointer',
                   padding: 0
@@ -195,7 +195,7 @@ const LoginPage = () => {
                 left: '0.85rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#71717a'
+                color: '#94a3b8'
               }} />
               <input
                 type="password"
@@ -243,38 +243,38 @@ const LoginPage = () => {
                   width: '36px',
                   height: '36px',
                   borderRadius: '10px',
-                  background: 'rgba(37, 99, 235, 0.1)',
-                  color: '#2563eb',
+                  background: 'rgba(99, 102, 241, 0.15)',
+                  color: '#818cf8',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
                   <KeyRound size={20} />
                 </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Reset Password</h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>Reset Password</h3>
               </div>
               <button
                 onClick={() => setShowResetModal(false)}
                 className="btn-icon"
-                style={{ color: '#64748b' }}
+                style={{ color: '#94a3b8' }}
               >
                 <X size={20} />
               </button>
             </div>
 
-            <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
               Enter your registered email address and choose a new password.
             </p>
 
             {resetError && (
               <div style={{
-                backgroundColor: '#fef2f2',
-                color: '#dc2626',
+                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                color: '#f87171',
                 padding: '0.75rem 1rem',
                 borderRadius: '8px',
                 fontSize: '0.88rem',
                 marginBottom: '1rem',
-                border: '1px solid #fecaca',
+                border: '1px solid rgba(239, 68, 68, 0.35)',
                 fontWeight: 500
               }}>
                 {resetError}
@@ -283,26 +283,26 @@ const LoginPage = () => {
 
             {resetSuccess ? (
               <div style={{
-                backgroundColor: '#ecfdf5',
-                color: '#047857',
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                color: '#34d399',
                 padding: '1.25rem',
                 borderRadius: '8px',
                 fontSize: '0.92rem',
                 marginBottom: '1rem',
-                border: '1px solid #a7f3d0',
+                border: '1px solid rgba(16, 185, 129, 0.35)',
                 textAlign: 'center',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '0.5rem'
               }}>
-                <CheckCircle2 size={32} color="#059669" />
+                <CheckCircle2 size={32} color="#34d399" />
                 <span style={{ fontWeight: 600 }}>{resetSuccess}</span>
               </div>
             ) : (
               <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#18181b', marginBottom: '0.4rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '0.4rem' }}>
                     Email Address
                   </label>
                   <input
@@ -317,7 +317,7 @@ const LoginPage = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#18181b', marginBottom: '0.4rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '0.4rem' }}>
                     New Password
                   </label>
                   <input
@@ -333,7 +333,7 @@ const LoginPage = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#18181b', marginBottom: '0.4rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '0.4rem' }}>
                     Confirm New Password
                   </label>
                   <input
