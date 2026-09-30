@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }) => {
         showToast(`Welcome to Simple Task Tracker, ${userData.name}!`, 'success');
         return { success: true };
       }
+      return { success: false, message: 'Registration failed' };
     } catch (err) {
       const msg = err.response?.data?.message || 'Registration failed';
       showToast(msg, 'error');
@@ -72,6 +73,7 @@ export const AuthProvider = ({ children }) => {
         showToast(`Welcome back, ${userData.name}!`, 'success');
         return { success: true };
       }
+      return { success: false, message: 'Login failed' };
     } catch (err) {
       const msg = err.response?.data?.message || 'Invalid credentials';
       showToast(msg, 'error');
@@ -91,6 +93,7 @@ export const AuthProvider = ({ children }) => {
         showToast(`Signed in with Google as ${userData.name}`, 'success');
         return { success: true };
       }
+      return { success: false, message: 'Google login failed' };
     } catch (err) {
       const msg = err.response?.data?.message || 'Google login failed';
       showToast(msg, 'error');
@@ -120,6 +123,7 @@ export const AuthProvider = ({ children }) => {
         showToast('Logged in as Guest Explorer!', 'success');
         return { success: true };
       }
+      return { success: false };
     } catch (err) {
       showToast('Could not start guest session', 'error');
       return { success: false };

@@ -1,8 +1,9 @@
-import React from 'react';
-import { CheckCircle2, Circle, Clock, Edit2, Trash2, Calendar, Tag } from 'lucide-react';
+import React, { useState } from 'react';
+import { CheckCircle2, Circle, Clock, Edit2, Trash2, Calendar, Tag, AlertTriangle, X } from 'lucide-react';
 
 const TaskCard = ({ task, onToggleStatus, onEdit, onDelete }) => {
   const { _id, title, description, status, priority, category, dueDate } = task;
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const isCompleted = status === 'completed';
 
@@ -14,9 +15,13 @@ const TaskCard = ({ task, onToggleStatus, onEdit, onDelete }) => {
   };
 
   // Check if task is overdue
-  const isOverdue = () => {
-    if (!dueDate || isCompleted) return false;
-    return new Date(dueDate) < new Date().setHours(0, 0, 0, 0);
+  const isOverdue = !dueDate || isCompleted ? false : new Date(dueDate) < new Date().setHours(0, 0, 0, 0);
+
+  const handleDeleteClick = () => setConfirmDelete(true);
+  const handleCancelDelete = () => setConfirmDelete(false);
+  const handleConfirmDelete = () => {
+    setConfirmDelete(false);
+    onDelete(_id);
   };
 
   return (
@@ -36,6 +41,56 @@ const TaskCard = ({ task, onToggleStatus, onEdit, onDelete }) => {
         }`
       }}
     >
+      {/* Inline Delete Confirmation Overlay */}
+      {confirmDelete && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: 'inherit',
+          background: 'rgba(15, 23, 42, 0.95)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '1rem',
+          zIndex: 10,
+          padding: '1.25rem',
+        }}>
+          <AlertTriangle size={28} style={{ color: '#f87171' }} />
+          <p style={{ textAlign: 'center', fontSize: '0.92rem', fontWeight: 600, color: '#f8fafc', margin: 0 }}>
+            Delete this task?
+          </p>
+          <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
+            This action cannot be undone.
+          </p>
+          <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.25rem' }}>
+            <button
+              onClick={handleCancelDelete}
+              className="btn btn-secondary btn-sm"
+              style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              style={{
+                padding: '0.4rem 1rem',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                background: 'rgba(239, 68, 68, 0.85)',
+                color: '#fff',
+                border: '1px solid rgba(239, 68, 68, 0.5)',
+                borderRadius: 'var(--radius-sm)',
+                cursor: 'pointer',
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+
       <div>
         {/* Header row: Checkbox, Title, Badges */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
@@ -121,12 +176,12 @@ const TaskCard = ({ task, onToggleStatus, onEdit, onDelete }) => {
         paddingTop: '0.75rem',
         borderTop: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
-        <div style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem', color: isOverdue() ? '#f87171' : 'var(--text-subtle)' }}>
+        <div style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem', color: isOverdue ? '#f87171' : 'var(--text-subtle)' }}>
           {dueDate && (
             <>
               <Calendar size={13} />
-              <span style={{ fontWeight: isOverdue() ? 700 : 500 }}>
-                {formatDate(dueDate)} {isOverdue() && '(Overdue)'}
+              <span style={{ fontWeight: isOverdue ? 700 : 500 }}>
+                {formatDate(dueDate)} {isOverdue && '(Overdue)'}
               </span>
             </>
           )}
@@ -143,7 +198,7 @@ const TaskCard = ({ task, onToggleStatus, onEdit, onDelete }) => {
           </button>
 
           <button
-            onClick={() => onDelete(_id)}
+            onClick={handleDeleteClick}
             className="btn-icon"
             title="Delete Task"
             style={{ padding: '0.4rem', color: 'rgba(239, 68, 68, 0.7)' }}

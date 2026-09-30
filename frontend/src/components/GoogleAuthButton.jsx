@@ -7,7 +7,6 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [view, setView] = useState('another'); // 'chooser' | 'another'
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -47,7 +46,6 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
     setErrorMsg('');
     setEmailInput('');
     setPasswordInput('');
-    setView('another'); // Direct sign in view, without showing mail accounts list
     setShowModal(true);
   };
 

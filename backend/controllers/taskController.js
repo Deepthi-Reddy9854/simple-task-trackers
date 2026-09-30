@@ -38,14 +38,36 @@ const getTasks = async (req, res) => {
       sortOptions = { createdAt: 1 };
     } else if (sortBy === 'dueDate') {
       sortOptions = { dueDate: 1 };
-    } else if (sortBy === 'priority') {
-      // Custom sorting order by priority
-      sortOptions = { priority: -1 };
     } else if (sortBy === 'title') {
       sortOptions = { title: 1 };
     }
 
-    const tasks = await Task.find(query).sort(sortOptions);
+    let tasks;
+    if (sortBy === 'priority') {
+      // Use aggregation for correct semantic priority order: urgent > high > medium > low
+      tasks = await Task.aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            priorityWeight: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ['$priority', 'urgent'] }, then: 4 },
+                  { case: { $eq: ['$priority', 'high'] }, then: 3 },
+                  { case: { $eq: ['$priority', 'medium'] }, then: 2 },
+                  { case: { $eq: ['$priority', 'low'] }, then: 1 },
+                ],
+                default: 0,
+              },
+            },
+          },
+        },
+        { $sort: { priorityWeight: -1, createdAt: -1 } },
+        { $project: { priorityWeight: 0 } },
+      ]);
+    } else {
+      tasks = await Task.find(query).sort(sortOptions);
+    }
 
     res.json({
       success: true,

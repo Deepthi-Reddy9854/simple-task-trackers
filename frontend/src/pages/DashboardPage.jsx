@@ -26,7 +26,7 @@ const DashboardPage = () => {
   const [taskToEdit, setTaskToEdit] = useState(null);
 
   // Fetch task stats
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const res = await API.get('/tasks/stats');
       if (res.data.success) {
@@ -35,7 +35,7 @@ const DashboardPage = () => {
     } catch (err) {
       console.error('Failed to fetch stats:', err);
     }
-  };
+  }, []);
 
   // Fetch task list with filter params
   const fetchTasks = useCallback(async () => {
@@ -62,7 +62,7 @@ const DashboardPage = () => {
   useEffect(() => {
     fetchTasks();
     fetchStats();
-  }, [fetchTasks]);
+  }, [fetchTasks, fetchStats]);
 
   // Handle Save (Create or Update Task)
   const handleSaveTask = async (taskData, id = null) => {
