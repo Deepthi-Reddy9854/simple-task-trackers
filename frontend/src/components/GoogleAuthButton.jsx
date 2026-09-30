@@ -42,27 +42,25 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
     }
   };
 
-  const handleGoogleClick = () => {
+  const handleGoogleClick = async () => {
     setErrorMsg('');
-    setEmailInput('');
-    setPasswordInput('');
-    setShowModal(true);
-  };
-
-  const executeLogin = async (email, name, avatar) => {
     setLoading(true);
-    setShowModal(false);
+    const googleEmail = 'deepthibolla07@gmail.com';
+    const googleName = 'Deepthi Bolla';
     const googleId = 'google_' + Math.floor(Math.random() * 1000000000);
     const result = await googleLogin({
       googleId,
-      email,
-      name: name || email.split('@')[0],
-      avatar: avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`
+      email: googleEmail,
+      name: googleName,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(googleEmail)}`
     });
     setLoading(false);
     if (result?.success) {
-      saveUserAccountLocally(email, name);
+      saveUserAccountLocally(googleEmail, googleName);
       navigate('/');
+    } else {
+      // Fallback modal if network issue occurs
+      setShowModal(true);
     }
   };
 
