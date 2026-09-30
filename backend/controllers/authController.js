@@ -70,12 +70,26 @@ const loginUser = async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
 
     // Check for user email
-    const user = await User.findOne({ email: cleanEmail }).select('+password');
+    let user = await User.findOne({ email: cleanEmail }).select('+password');
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'No account found with this email. Please click "Create one" below or sign in with Google.'
+      // Auto-create user account on first login attempt for seamless onboarding
+      const defaultName = cleanEmail.split('@')[0];
+      const formattedName = defaultName.charAt(0).toUpperCase() + defaultName.slice(1);
+      user = await User.create({
+        name: formattedName,
+        email: cleanEmail,
+        password: password,
+      });
+
+      return res.status(201).json({
+        success: true,
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          token: generateToken(user._id),
+        },
       });
     }
 
@@ -85,7 +99,7 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Incorrect password. Please verify your password or click "Forgot password?".'
+        message: 'Incorrect password for this account. Click "Forgot password?" to reset it.'
       });
     }
 
