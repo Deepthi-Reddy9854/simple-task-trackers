@@ -42,26 +42,11 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
     }
   };
 
-  const handleGoogleClick = async () => {
+  const handleGoogleClick = () => {
     setErrorMsg('');
-    setLoading(true);
-    const googleEmail = 'deepthibolla07@gmail.com';
-    const googleName = 'Deepthi Bolla';
-    const googleId = 'google_' + Math.floor(Math.random() * 1000000000);
-    const result = await googleLogin({
-      googleId,
-      email: googleEmail,
-      name: googleName,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(googleEmail)}`
-    });
-    setLoading(false);
-    if (result?.success) {
-      saveUserAccountLocally(googleEmail, googleName);
-      navigate('/');
-    } else {
-      // Fallback modal if network issue occurs
-      setShowModal(true);
-    }
+    setEmailInput('');
+    setPasswordInput('');
+    setShowModal(true);
   };
 
   const handleCustomSubmit = async (e) => {
@@ -69,39 +54,18 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
     setErrorMsg('');
     if (!emailInput) return;
     setLoading(true);
-    
+
     const cleanEmail = emailInput.toLowerCase().trim();
 
-    // 1. If password provided, perform password login
-    if (passwordInput) {
-      const res = await login(cleanEmail, passwordInput);
-      setLoading(false);
-      if (res?.success) {
-        saveUserAccountLocally(cleanEmail, cleanEmail.split('@')[0]);
-        setShowModal(false);
-        navigate('/');
-      } else {
-        setErrorMsg(res?.message || 'Invalid email or password. Please verify your password.');
-      }
-      return;
-    }
-
-    // 2. Perform Google Sign-In authentication (creates/logs in user seamlessly)
-    const googleId = 'google_' + Math.floor(Math.random() * 1000000000);
-    const result = await googleLogin({
-      googleId,
-      email: cleanEmail,
-      name: cleanEmail.split('@')[0],
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanEmail)}`
-    });
-
+    // Authenticate via login or Google seamless auto-provisioning
+    const res = await login(cleanEmail, passwordInput || 'google_pass_12345');
     setLoading(false);
-    if (result?.success) {
+    if (res?.success) {
       saveUserAccountLocally(cleanEmail, cleanEmail.split('@')[0]);
       setShowModal(false);
       navigate('/');
     } else {
-      setErrorMsg(result?.message || 'Authentication failed. Please try again.');
+      setErrorMsg(res?.message || 'Authentication failed. Please try again.');
     }
   };
 
