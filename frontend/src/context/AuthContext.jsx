@@ -134,10 +134,13 @@ export const AuthProvider = ({ children }) => {
   const resetPassword = async (email, newPassword) => {
     try {
       const res = await API.post('/auth/reset-password', { email, newPassword });
-      if (res.data.success) {
+      if (res.data?.success) {
         showToast(res.data.message || 'Password reset successfully!', 'success');
         return { success: true, message: res.data.message };
       }
+      const msg = res.data?.message || 'Failed to reset password';
+      showToast(msg, 'error');
+      return { success: false, message: msg };
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to reset password';
       showToast(msg, 'error');

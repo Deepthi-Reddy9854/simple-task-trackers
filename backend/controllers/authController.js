@@ -215,13 +215,17 @@ const resetPassword = async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
     let user = await User.findOne({ email: cleanEmail });
 
+    const bcrypt = require('bcryptjs');
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
     if (!user) {
       // Auto-register user with specified new password
       const defaultName = cleanEmail.split('@')[0];
       user = await User.create({
         name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
         email: cleanEmail,
-        password: newPassword,
+        password: hashedPassword,
       });
 
       return res.json({
@@ -230,9 +234,8 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    // Update password
-    user.password = newPassword;
-    await user.save();
+    // Update password directly in database
+    await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
 
     res.json({
       success: true,
