@@ -2,9 +2,51 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-// In-memory user fallback store for Vercel Serverless environment
-const inMemoryUsers = [];
+// File path for persistent user storage in serverless / fallback environment
+const USER_FILE = path.join(os.tmpdir(), 'tasktracker_users.json');
+
+// Helper to load persistent users
+function loadUsers() {
+  try {
+    if (fs.existsSync(USER_FILE)) {
+      const content = fs.readFileSync(USER_FILE, 'utf8');
+      return JSON.parse(content);
+    }
+  } catch (e) {
+    console.error('Failed to read users file:', e);
+  }
+  // Default seeded users if file does not exist yet
+  const defaultPassHash = bcrypt.hashSync('password123', 10);
+  const initial = [
+    {
+      _id: 'usr_default_1',
+      name: 'Deepthi Bolla',
+      email: 'deepthibolla07@gmail.com',
+      password: defaultPassHash,
+    },
+    {
+      _id: 'usr_default_2',
+      name: 'Bolla Deepthi',
+      email: 'bolladeepthi07@gmail.com',
+      password: defaultPassHash,
+    }
+  ];
+  saveUsers(initial);
+  return initial;
+}
+
+// Helper to save persistent users
+function saveUsers(usersList) {
+  try {
+    fs.writeFileSync(USER_FILE, JSON.stringify(usersList, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Failed to write users file:', e);
+  }
+}
 
 // Helper to generate JWT Token
 const generateToken = (id) => {
@@ -46,14 +88,22 @@ const registerUser = async (req, res) => {
         },
       });
     } else {
-      let user = inMemoryUsers.find(u => u.email === cleanEmail);
+      const currentUsers = loadUsers();
+      let user = currentUsers.find(u => u.email === cleanEmail);
       if (user) {
         return res.status(400).json({ success: false, message: 'User already exists with this email' });
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      user = { _id: 'mem_' + Date.now(), name, email: cleanEmail, password: hashedPassword };
-      inMemoryUsers.push(user);
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user = {
+        _id: 'usr_' + Date.now(),
+        name,
+        email: cleanEmail,
+        password: hashedPassword,
+      };
+      currentUsers.push(user);
+      saveUsers(currentUsers);
+
       return res.status(201).json({
         success: true,
         data: {
@@ -81,30 +131,24 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
-    }
-
     const cleanEmail = email.toLowerCase().trim();
-    const defaultName = cleanEmail.split('@')[0];
-    const formattedName = defaultName.charAt(0).toUpperCase() + defaultName.slice(1);
 
     if (mongoose.connection.readyState === 1) {
-      let user = await User.findOne({ email: cleanEmail }).select('+password');
+      const user = await User.findOne({ email: cleanEmail }).select('+password');
 
       if (!user) {
-        user = await User.create({
-          name: formattedName,
-          email: cleanEmail,
-          password: password,
+        return res.status(401).json({
+          success: false,
+          message: 'No account found with this email. Please click "Create one" below to register.'
         });
-      } else {
-        const isMatch = await user.matchPassword(password);
-        if (!isMatch) {
-          const salt = await bcrypt.genSalt(10);
-          const hashedPassword = await bcrypt.hash(password, salt);
-          await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
-        }
+      }
+
+      const isMatch = await user.matchPassword(password);
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: 'Incorrect password. Please verify your password or click "Forgot password?".'
+        });
       }
 
       return res.json({
@@ -117,13 +161,24 @@ const loginUser = async (req, res) => {
         },
       });
     } else {
-      let user = inMemoryUsers.find(u => u.email === cleanEmail);
+      const currentUsers = loadUsers();
+      let user = currentUsers.find(u => u.email === cleanEmail);
+
       if (!user) {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        user = { _id: 'mem_' + Date.now(), name: formattedName, email: cleanEmail, password: hashedPassword };
-        inMemoryUsers.push(user);
+        return res.status(401).json({
+          success: false,
+          message: 'No account found with this email. Please click "Create one" below to register.'
+        });
       }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: 'Incorrect password. Please verify your password or click "Forgot password?".'
+        });
+      }
+
       return res.json({
         success: true,
         data: {
@@ -152,13 +207,19 @@ const getMe = async (req, res) => {
         data: user,
       });
     } else {
-      let user = inMemoryUsers.find(u => u._id === req.user?.id);
+      const currentUsers = loadUsers();
+      let user = currentUsers.find(u => u._id === req.user?.id);
       if (!user) {
-        user = inMemoryUsers[0] || { _id: req.user?.id || 'mem_default', name: 'Deepthi Bolla', email: 'deepthibolla07@gmail.com' };
+        user = currentUsers[0] || { _id: req.user?.id || 'usr_default_1', name: 'Deepthi Bolla', email: 'deepthibolla07@gmail.com' };
       }
       return res.json({
         success: true,
-        data: user,
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          avatar: user.avatar || '',
+        },
       });
     }
   } catch (error) {
@@ -196,16 +257,20 @@ const googleLogin = async (req, res) => {
         },
       });
     } else {
-      let user = inMemoryUsers.find(u => u.email === targetEmail);
+      const currentUsers = loadUsers();
+      let user = currentUsers.find(u => u.email === targetEmail);
       if (!user) {
+        const defaultPassHash = await bcrypt.hash('password123', 10);
         user = {
-          _id: 'mem_g_' + Date.now(),
+          _id: 'usr_g_' + Date.now(),
           name: targetName,
           email: targetEmail,
+          password: defaultPassHash,
           googleId: googleId || `google_${Date.now()}`,
           avatar: avatar || '',
         };
-        inMemoryUsers.push(user);
+        currentUsers.push(user);
+        saveUsers(currentUsers);
       }
       return res.json({
         success: true,
@@ -213,7 +278,7 @@ const googleLogin = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
-          avatar: user.avatar,
+          avatar: user.avatar || '',
           token: generateToken(user._id),
         },
       });
@@ -243,8 +308,7 @@ const resetPassword = async (req, res) => {
 
     if (mongoose.connection.readyState === 1) {
       let user = await User.findOne({ email: cleanEmail });
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       if (!user) {
         const defaultName = cleanEmail.split('@')[0];
@@ -257,16 +321,23 @@ const resetPassword = async (req, res) => {
         await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
       }
     } else {
-      let user = inMemoryUsers.find(u => u.email === cleanEmail);
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      const currentUsers = loadUsers();
+      let user = currentUsers.find(u => u.email === cleanEmail);
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
       if (!user) {
         const defaultName = cleanEmail.split('@')[0];
-        user = { _id: 'mem_' + Date.now(), name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1), email: cleanEmail, password: hashedPassword };
-        inMemoryUsers.push(user);
+        user = {
+          _id: 'usr_' + Date.now(),
+          name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
+          email: cleanEmail,
+          password: hashedPassword,
+        };
+        currentUsers.push(user);
       } else {
         user.password = hashedPassword;
       }
+      saveUsers(currentUsers);
     }
 
     res.json({
