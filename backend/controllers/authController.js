@@ -157,18 +157,18 @@ const googleLogin = async (req, res) => {
     });
 
     if (user) {
-      // Update googleId or avatar if not set
-      let modified = false;
+      // Update googleId or avatar if not set safely using updateOne
+      const updates = {};
       if (!user.googleId && targetGoogleId) {
+        updates.googleId = targetGoogleId;
         user.googleId = targetGoogleId;
-        modified = true;
       }
       if (targetAvatar && user.avatar !== targetAvatar) {
+        updates.avatar = targetAvatar;
         user.avatar = targetAvatar;
-        modified = true;
       }
-      if (modified) {
-        await user.save();
+      if (Object.keys(updates).length > 0) {
+        await User.updateOne({ _id: user._id }, { $set: updates });
       }
     } else {
       // Create new Google user

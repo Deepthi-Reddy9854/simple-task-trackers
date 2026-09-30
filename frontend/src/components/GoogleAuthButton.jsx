@@ -74,16 +74,18 @@ const GoogleAuthButton = ({ text = "Continue with Google", onForgotPassword }) =
     
     const cleanEmail = emailInput.toLowerCase().trim();
 
-    // 1. Try standard login if password provided
+    // 1. If password provided, perform password login
     if (passwordInput) {
       const res = await login(cleanEmail, passwordInput);
+      setLoading(false);
       if (res?.success) {
         saveUserAccountLocally(cleanEmail, cleanEmail.split('@')[0]);
-        setLoading(false);
         setShowModal(false);
         navigate('/');
-        return;
+      } else {
+        setErrorMsg(res?.message || 'Invalid email or password. Please verify your password.');
       }
+      return;
     }
 
     // 2. Perform Google Sign-In authentication (creates/logs in user seamlessly)
